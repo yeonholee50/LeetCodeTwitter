@@ -82,3 +82,7 @@ async def login(credentials: LoginModel):
     # Generate JWT token
     token = create_jwt(str(user["_id"]))
     return {"message": "Login successful", "token": token}
+
+@app.get('/')
+async def root():
+    return {"message": "Design Twitter API is running!"}

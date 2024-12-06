@@ -1,4 +1,5 @@
 fastapi # Ensure you are using the latest version compatible with your setup
+python
 pydantic
 uvicorn
 pymongo
