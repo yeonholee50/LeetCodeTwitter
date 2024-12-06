@@ -9,12 +9,12 @@ const Home = () => {
     <div className="home-container">
         <Helmet>
         <link rel="icon" href="./twitterlogo.png" type="image/png" size="16x16"/>
-        <title>Leetcode Twitter</title>
+        <title>LeetCode Twitter</title>
         
       </Helmet>
       <img src={twitterLogo} alt="Twitter Logo" className="twitter-logo" />
-      <h1>Welcome to Leetcode Twitter</h1>
-      <p>A Meme Project Inspired From a System Design Leetcode Problem</p>
+      <h1>Welcome to LeetCode Twitter</h1>
+      <p>A Meme Project Inspired From a System Design LeetCode Problem</p>
       <div>
         <Link to="/login">
           <button>Login</button>
