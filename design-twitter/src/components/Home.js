@@ -9,7 +9,7 @@ const Home = () => {
     <div className="home-container">
         <Helmet>
         <title>Leetcode Twitter</title>
-        <link rel="icon" href="/twitterlogo.png" type="image/png" />
+        <link rel="icon" href="./twitterlogo.png" type="image/png" size="16x16"/>
       </Helmet>
       <img src={twitterLogo} alt="Twitter Logo" className="twitter-logo" />
       <h1>Welcome to Leetcode Twitter</h1>
