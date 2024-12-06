@@ -8,8 +8,9 @@ const Home = () => {
   return (
     <div className="home-container">
         <Helmet>
-        <title>Leetcode Twitter</title>
         <link rel="icon" href="./twitterlogo.png" type="image/png" size="16x16"/>
+        <title>Leetcode Twitter</title>
+        
       </Helmet>
       <img src={twitterLogo} alt="Twitter Logo" className="twitter-logo" />
       <h1>Welcome to Leetcode Twitter</h1>
