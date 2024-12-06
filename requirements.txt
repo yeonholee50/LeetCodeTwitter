@@ -1,6 +1,6 @@
-fastapi==0.100.0  # Ensure you are using the latest version compatible with your setup
-pydantic==1.10.7  # For data validation and settings management
-uvicorn==0.22.0  # ASGI server to run the FastAPI app
-pymongo==4.5.0  # MongoDB client for Python
-bcrypt==4.0.1  # For secure password hashing
-pyjwt==2.7.0  # For JWT token creation and verification
+fastapi # Ensure you are using the latest version compatible with your setup
+pydantic
+uvicorn
+pymongo
+bcrypt
+pyjwt
