@@ -1,12 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./styles/Home.css";
+import twitterLogo from './twitterlogo.png'
+import { Helmet } from "react-helmet";
 
 const Home = () => {
   return (
     <div className="home-container">
-      <h1>Welcome to Design Twitter</h1>
-      <p>The platform where ideas fly! Connect, share, and explore.</p>
+        <Helmet>
+        <title>Leetcode Twitter</title>
+        <link rel="icon" href="/twitterlogo.png" type="image/png" />
+      </Helmet>
+      <img src={twitterLogo} alt="Twitter Logo" className="twitter-logo" />
+      <h1>Welcome to Leetcode Twitter</h1>
+      <p>A Meme Project Inspired From a System Design Leetcode Problem</p>
       <div>
         <Link to="/login">
           <button>Login</button>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import "./styles/Login.css";
 
@@ -36,8 +37,15 @@ const Login = () => {
       <br />
       <button onClick={handleLogin}>Login</button>
       <p className="message">{message}</p>
+      <p>
+        Don't have an account?{" "}
+        <Link to="/signup" className="signup-link">
+          Click here to sign up.
+        </Link>
+      </p>
     </div>
   );
 };
 
 export default Login;
+

@@ -6,4 +6,3 @@ pymongo
 bcrypt
 python-dotenv
 pyjwt
-

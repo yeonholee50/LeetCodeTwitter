@@ -46,3 +46,19 @@
     font-size: 16px;
     color: #E0245E; /* Error red for unsuccessful login */
 }
+
+p {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #657786;
+}
+
+.signup-link {
+    color: #1DA1F2;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.signup-link:hover {
+    text-decoration: underline;
+}
