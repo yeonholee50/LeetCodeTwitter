@@ -1,0 +1,68 @@
+Backend: 
+Framework: Flask or FastAPI (FastAPI preferred for async support and modern features)
+
+Database: MongoDB (NoSQL for flexibility with dynamic data structures)
+
+Authentication: JWT (JSON Web Tokens)
+
+Additional Libraries: bcrypt (password hashing), Pydantic (data validation)
+
+Frontend:
+Framework: React with Create React App or Vite
+
+State Management: Redux Toolkit or Context API
+
+Styling: Tailwind CSS or Material-UI
+
+Routing: React Router
+
+Features (Phase 1)
+1. Authentication System
+Login Page
+Fields: Email, Password
+Validation: Client-side (e.g., required fields) and server-side validation
+Error Messages: Incorrect password, user not found
+Signup Page
+Fields: Username, Email, Password, Confirm Password
+Validation:
+Check if email is already registered
+Ensure strong password (e.g., 8+ characters, special symbols)
+Success Flow: Redirect to the login page
+Backend API Endpoints
+POST /signup:
+Request Body: { username, email, password }
+Validation: Check for unique email, hash password using bcrypt
+Response: 201 Created on success
+POST /login:
+Request Body: { email, password }
+Validation: Match email and password, generate JWT token
+Response: 200 OK with token on success
+MongoDB Collections
+Users
+Fields: _id, username, email, hashed_password, followers, following
+2. UI Components
+Reusable Components:
+InputField
+Button
+Notification (for errors and success messages)
+Page Layout:
+Responsive design for mobile and desktop
+
+Features (Phase 2)
+1. Tweet Management
+Post a Tweet:
+Field: Text input (max 280 characters)
+Backend: Add to tweets collection in MongoDB
+View News Feed:
+Combine tweets from the user and followed accounts
+Sort by timestamp (most recent first)
+Backend API Endpoints
+POST /tweet:
+Request Body: { user_id, content }
+Response: 201 Created
+GET /feed:
+Request Params: user_id
+Response: List of tweets (max 10 recent)
+MongoDB Collections
+Tweets
+Fields: _id, user_id, content, timestamp
