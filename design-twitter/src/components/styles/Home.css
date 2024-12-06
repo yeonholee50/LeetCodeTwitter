@@ -1,0 +1,40 @@
+.home-container {
+    text-align: center;
+    padding: 50px;
+    background-color: #E6ECF0;
+    color: #14171A;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-container h1 {
+    color: #1DA1F2;
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.home-container p {
+    font-size: 18px;
+    color: #657786;
+    margin-bottom: 30px;
+}
+
+.home-container button {
+    background: linear-gradient(90deg, #1DA1F2, #0A95DD);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.home-container button:hover {
+    background: linear-gradient(90deg, #0A95DD, #1DA1F2);
+    transition: 0.3s;
+}
+

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Header
 from pydantic import BaseModel, EmailStr, Field
 from bson.objectid import ObjectId
 from pymongo import MongoClient
@@ -10,17 +10,11 @@ import os
 import dotenv
 
 dotenv.load_dotenv()
-"""
-comment out this part when delpoying
-import config
-MONGO_URI = config.MongoURI
-SECRET_KEY = config.SECRET_KEY
-ALGORITHM = config.ALGORITHM
-"""
+
 MONGO_URI = os.environ.get("MONGO_URI")
 SECRET_KEY = os.environ.get("SECRET_KEY")
 ALGORITHM = os.environ.get("ALGORITHM")
-# Setup FastAPI app
+
 app = FastAPI()
 
 # MongoDB Connection
@@ -29,8 +23,6 @@ db = client["design_twitter"]
 users_collection = db["users"]
 
 # JWT Configuration
-
-
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
@@ -44,6 +36,15 @@ def create_jwt(user_id: str) -> str:
     }
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
+def verify_jwt(token: str) -> Dict:
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired.")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token.")
+
 # Models
 class SignupModel(BaseModel):
     username: str = Field(..., max_length=50)
@@ -54,14 +55,18 @@ class LoginModel(BaseModel):
     email: EmailStr
     password: str
 
+class UserProfile(BaseModel):
+    username: str
+    email: str
+    followers: list
+    following: list
+
 # Endpoints
 @app.post("/signup")
 async def signup(user: SignupModel):
-    # Check if email already exists
     if users_collection.find_one({"email": user.email}):
         raise HTTPException(status_code=400, detail="Email is already registered.")
 
-    # Create user
     hashed_password = hash_password(user.password)
     user_data = {
         "username": user.username,
@@ -79,9 +84,28 @@ async def login(credentials: LoginModel):
     if not user or not verify_password(credentials.password, user["hashed_password"]):
         raise HTTPException(status_code=401, detail="Invalid email or password.")
 
-    # Generate JWT token
     token = create_jwt(str(user["_id"]))
     return {"message": "Login successful", "token": token}
+
+@app.get("/profile")
+async def profile(token: str = Header(None)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Token required.")
+
+    payload = verify_jwt(token)
+    user_id = payload.get("user_id")
+    user = users_collection.find_one({"_id": ObjectId(user_id)})
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found.")
+
+    user_profile = UserProfile(
+        username=user["username"],
+        email=user["email"],
+        followers=user["followers"],
+        following=user["following"]
+    )
+    return user_profile
 
 @app.get('/')
 async def root():
