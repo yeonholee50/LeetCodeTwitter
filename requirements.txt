@@ -3,4 +3,5 @@ pydantic
 uvicorn
 pymongo
 bcrypt
+python-dotenv
 pyjwt
