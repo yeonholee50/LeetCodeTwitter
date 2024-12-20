@@ -1,11 +1,11 @@
 from fastapi import FastAPI, HTTPException, Depends, Header
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 from bson.objectid import ObjectId
 from pymongo import MongoClient
 import bcrypt
 import jwt
 import datetime
-from typing import Dict
+from typing import List, Optional
 import os
 import dotenv
 
@@ -19,10 +19,10 @@ app = FastAPI()
 
 # MongoDB Connection
 client = MongoClient(MONGO_URI)
-db = client["design_twitter"]
+db = client["leetcode_twitter"]
 users_collection = db["users"]
+tweets_collection = db["tweets"]
 
-# JWT Configuration
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
@@ -36,7 +36,7 @@ def create_jwt(user_id: str) -> str:
     }
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
-def verify_jwt(token: str) -> Dict:
+def verify_jwt(token: str) -> dict:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
@@ -48,65 +48,96 @@ def verify_jwt(token: str) -> Dict:
 # Models
 class SignupModel(BaseModel):
     username: str = Field(..., max_length=50)
-    email: EmailStr
     password: str = Field(..., min_length=8)
 
 class LoginModel(BaseModel):
-    email: EmailStr
+    username: str
     password: str
 
-class UserProfile(BaseModel):
-    username: str
-    email: str
-    followers: list
-    following: list
+class TweetModel(BaseModel):
+    content: str = Field(..., max_length=280)
+    timestamp: float
 
-# Endpoints
 @app.post("/signup")
 async def signup(user: SignupModel):
-    if users_collection.find_one({"email": user.email}):
-        raise HTTPException(status_code=400, detail="Email is already registered.")
+    if users_collection.find_one({"username": user.username}):
+        raise HTTPException(status_code=400, detail="Username is already taken.")
 
     hashed_password = hash_password(user.password)
     user_data = {
         "username": user.username,
-        "email": user.email,
         "hashed_password": hashed_password,
         "followers": [],
         "following": []
     }
-    result = users_collection.insert_one(user_data)
-    return {"message": "User registered successfully", "user_id": str(result.inserted_id)}
+    users_collection.insert_one(user_data)
+    return {"message": "User registered successfully"}
 
 @app.post("/login")
 async def login(credentials: LoginModel):
-    user = users_collection.find_one({"email": credentials.email})
+    user = users_collection.find_one({"username": credentials.username})
     if not user or not verify_password(credentials.password, user["hashed_password"]):
-        raise HTTPException(status_code=401, detail="Invalid email or password.")
+        raise HTTPException(status_code=401, detail="Invalid username or password.")
 
     token = create_jwt(str(user["_id"]))
     return {"message": "Login successful", "token": token}
 
-@app.get("/profile")
-async def profile(token: str = Header(None)):
-    if not token:
-        raise HTTPException(status_code=401, detail="Token required.")
+@app.get("/search")
+async def search_users(prefix: str, token: str = Header(None)):
+    verify_jwt(token)
+    users = users_collection.find({"username": {"$regex": f"^{prefix}", "$options": "i"}}, {"username": 1})
+    return [user["username"] for user in users]
 
+@app.post("/follow")
+async def follow_user(target_username: str, token: str = Header(None)):
+    payload = verify_jwt(token)
+    user_id = payload.get("user_id")
+    user = users_collection.find_one({"_id": ObjectId(user_id)})
+    target_user = users_collection.find_one({"username": target_username})
+
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found.")
+
+    if target_username in user["following"]:
+        raise HTTPException(status_code=400, detail="Already following this user.")
+
+    users_collection.update_one({"_id": ObjectId(user_id)}, {"$push": {"following": target_username}})
+    users_collection.update_one({"username": target_username}, {"$push": {"followers": user["username"]}})
+    return {"message": "User followed successfully."}
+
+@app.post("/unfollow")
+async def unfollow_user(target_username: str, token: str = Header(None)):
     payload = verify_jwt(token)
     user_id = payload.get("user_id")
     user = users_collection.find_one({"_id": ObjectId(user_id)})
 
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found.")
+    if target_username not in user["following"]:
+        raise HTTPException(status_code=400, detail="You are not following this user.")
 
-    user_profile = UserProfile(
-        username=user["username"],
-        email=user["email"],
-        followers=user["followers"],
-        following=user["following"]
-    )
-    return user_profile
+    users_collection.update_one({"_id": ObjectId(user_id)}, {"$pull": {"following": target_username}})
+    users_collection.update_one({"username": target_username}, {"$pull": {"followers": user["username"]}})
+    return {"message": "User unfollowed successfully."}
 
-@app.get('/')
-async def root():
-    return {"message": "Design Twitter API is running!"}
+@app.post("/tweet")
+async def post_tweet(tweet: TweetModel, token: str = Header(None)):
+    payload = verify_jwt(token)
+    user_id = payload.get("user_id")
+    user = users_collection.find_one({"_id": ObjectId(user_id)})
+
+    tweet_data = {
+        "username": user["username"],
+        "content": tweet.content,
+        "timestamp": tweet.timestamp
+    }
+    tweets_collection.insert_one(tweet_data)
+    return {"message": "Tweet posted successfully."}
+
+@app.get("/feed")
+async def get_feed(token: str = Header(None)):
+    payload = verify_jwt(token)
+    user_id = payload.get("user_id")
+    user = users_collection.find_one({"_id": ObjectId(user_id)})
+
+    following = user["following"]
+    tweets = tweets_collection.find({"username": {"$in": following}}).sort("timestamp", -1).limit(10)
+    return [{"username": tweet["username"], "content": tweet["content"], "timestamp": tweet["timestamp"]} for tweet in tweets]

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./styles/Login.css";
-
+import TwitterLogo from "./TwitterLogo";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,6 +20,7 @@ const Login = () => {
 
   return (
     <div className="login-container">
+      <TwitterLogo />
       <h1>Login</h1>
       <input
         type="email"
