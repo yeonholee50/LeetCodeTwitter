@@ -168,7 +168,8 @@ async def post_tweet(tweet: TweetModel, token: str = Header(None)):
     return {"message": "Tweet posted successfully."}
 
 @app.post("/follow")
-async def follow_user(target_username: str, token: str = Header(None)):
+async def follow_user(data: dict, token: str = Header(None)):
+    target_username = data.get("target_username")
     payload = verify_jwt(token)
     user_id = payload.get("user_id")
     user = await users_collection.find_one({"_id": ObjectId(user_id)})
@@ -182,7 +183,8 @@ async def follow_user(target_username: str, token: str = Header(None)):
     return {"message": "User followed successfully."}
 
 @app.post("/unfollow")
-async def unfollow_user(target_username: str, token: str = Header(None)):
+async def unfollow_user(data: dict, token: str = Header(None)):
+    target_username = data.get("target_username")
     payload = verify_jwt(token)
     user_id = payload.get("user_id")
     user = await users_collection.find_one({"_id": ObjectId(user_id)})

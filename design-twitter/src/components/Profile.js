@@ -105,6 +105,52 @@ const Profile = () => {
     }
   };
 
+  const handleFollow = async (targetUsername) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const config = {
+        headers: {
+          token: token,
+        },
+      };
+
+      await axios.post(
+        `${global_link}follow`,
+        { target_username: targetUsername },
+        config
+      );
+      setMessage(`Followed ${targetUsername}`);
+      // Update search results to reflect the follow status
+      handleSearch();
+    } catch (error) {
+      setMessage(error.response?.data?.detail || `Failed to follow ${targetUsername}`);
+    }
+  };
+
+  const handleUnfollow = async (targetUsername) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const config = {
+        headers: {
+          token: token,
+        },
+      };
+
+      await axios.post(
+        `${global_link}unfollow`,
+        { target_username: targetUsername },
+        config
+      );
+      setMessage(`Unfollowed ${targetUsername}`);
+      // Update search results to reflect the unfollow status
+      handleSearch();
+    } catch (error) {
+      setMessage(error.response?.data?.detail || `Failed to unfollow ${targetUsername}`);
+    }
+  };
+
   return (
     <div className="profile-container">
       <h1>Welcome, {userData?.username}</h1>
@@ -132,7 +178,14 @@ const Profile = () => {
         {searchResults.length > 0 && (
           <ul>
             {searchResults.map((username, index) => (
-              <li key={index}>{username}</li>
+              <li key={index}>
+                {username}
+                {userData?.following.includes(username) ? (
+                  <button onClick={() => handleUnfollow(username)}>Unfollow</button>
+                ) : (
+                  <button onClick={() => handleFollow(username)}>Follow</button>
+                )}
+              </li>
             ))}
           </ul>
         )}
