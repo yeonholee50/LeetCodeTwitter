@@ -9,7 +9,7 @@ const Signup = () => {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post("http://127.0.0.1:8000/signup", { username, password });
+      const response = await axios.post("https://design-twitter.onrender.com/signup", { username, password });
       setMessage(response.data.message);
     } catch (error) {
       setMessage(error.response?.data?.detail || "Signup failed");
