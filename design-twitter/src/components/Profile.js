@@ -13,7 +13,7 @@ const Profile = () => {
 
   const searchUsers = async () => {
     try {
-      const response = await axios.get(`https://design-twitter.onrender.com//search?prefix=${search}`, {
+      const response = await axios.get(`https://design-twitter.onrender.com/search?prefix=${search}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsers(response.data);
