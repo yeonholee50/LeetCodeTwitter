@@ -15,6 +15,7 @@ const Login = () => {
       const response = await axios.post("https://design-twitter.onrender.com/login", { username, password });
       setMessage(response.data.message);
       localStorage.setItem("token", response.data.token);
+      console.log(response.data.token);
       navigate("/profile");
     } catch (error) {
       setMessage(error.response?.data?.detail || "Login failed");

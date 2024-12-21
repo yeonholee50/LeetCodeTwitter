@@ -11,6 +11,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import motor.motor_asyncio
 import logging
 
+
+
 # Load environment variables
 dotenv.load_dotenv()
 
@@ -44,7 +46,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def create_jwt(user_id: str) -> str:
     payload = {
         "user_id": user_id,
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+
     }
     
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
@@ -54,12 +56,12 @@ def create_jwt(user_id: str) -> str:
 def verify_jwt(token: str) -> dict:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        logging.debug(f"Decoded JWT Payload: {payload}")  # Log the decoded payload
+        
         return payload
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired.")
     except jwt.InvalidTokenError:
-        logging.error(token)  # Log the error
+        
         raise HTTPException(status_code=401, detail="Invalid token.")
 
 # Models
@@ -141,6 +143,7 @@ async def login(credentials: LoginModel):
         raise HTTPException(status_code=401, detail="Invalid username or password.")
 
     token = create_jwt(str(user["_id"]))
+    
     return {"message": "Login successful", "token": token}
 
 # Search Users

@@ -51,13 +51,19 @@ const Profile = () => {
 
   const handleSearch = async () => {
     const token = localStorage.getItem("token");
+
     try {
       const config = {
         headers: {
-            Authorization: `Bearer ${token}`,
+          token: token,
         },
       };
-      const response = await axios.get(`https://design-twitter.onrender.com/search?prefix=${searchQuery}`, config);
+      const response = await axios.get(
+        `https://design-twitter.onrender.com/search?prefix=${searchQuery}`,
+        config
+      );
+
+      // Set the results directly from the response data
       setSearchResults(response.data);
     } catch (error) {
       setMessage(error.response?.data?.detail || "Search failed.");
@@ -110,12 +116,13 @@ const Profile = () => {
         <button onClick={handleSearch}>Search</button>
         {searchResults.length > 0 && (
           <ul>
-            {searchResults.map((result) => (
-              <li key={result.id}>{result.username}</li>
+            {searchResults.map((username, index) => (
+              <li key={index}>{username}</li>
             ))}
           </ul>
         )}
       </div>
+
 
       <div className="feed-section">
         <h2>Your Feed</h2>
