@@ -48,7 +48,7 @@ def create_jwt(user_id: str) -> str:
     }
     
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
-    logging.debug(f"Generated JWT: {token}")  # Log the generated token
+    print(f"Generated JWT: {token}")  # Log the generated token
     return token
 
 def verify_jwt(token: str) -> dict:

@@ -54,7 +54,7 @@ const Profile = () => {
     try {
       const config = {
         headers: {
-          Authorization: token,
+            Authorization: `Bearer ${token}`,
         },
       };
       const response = await axios.get(`https://design-twitter.onrender.com/search?prefix=${searchQuery}`, config);
@@ -69,7 +69,7 @@ const Profile = () => {
     try {
       const config = {
         headers: {
-          Authorization: `${token}`,
+          Authorization: `Bearer ${token}`,
         },
       };
       await axios.post(
