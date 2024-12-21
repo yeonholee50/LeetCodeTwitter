@@ -1,16 +1,22 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./styles/Signup.css";
+import "./styles/Profile.css";
+import { Link, useNavigate } from "react-router-dom";
+
 
 const Signup = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post('http://127.0.0.1:8000/signup', { username, password });
+      const response = await axios.post('https://design-twitter.onrender.com/signup', { username, password });
       setMessage(response.data.message);
+      localStorage.setItem("token", response.data.token);
+      navigate("/profile");
     } catch (error) {
       console.error("Error during signup:", error); // Add this line for debugging
       setMessage(error.response?.data?.detail || "Signup failed");

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./styles/Login.css";
-import TwitterLogo from './twitterlogo.png';
+
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -23,7 +23,7 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <TwitterLogo />
+      
       <h1>Login</h1>
       <input
         type="text"
@@ -31,14 +31,14 @@ const Login = () => {
         value={username}
         onChange={(e) => setUsername(e.target.value)}
       />
-      <br />
+      <br/>
       <input
         type="password"
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <br />
+      <br/>
       <button onClick={handleLogin}>Login</button>
       <p className="message">{message}</p>
       <p>

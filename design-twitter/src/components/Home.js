@@ -14,7 +14,7 @@ const Home = () => {
       </Helmet>
       <img src={twitterLogo} alt="Twitter Logo" className="twitter-logo" />
       <h1>Welcome to LeetCode Twitter</h1>
-      <p>A Meme Project Inspired From a System Design LeetCode Problem</p>
+      <p>Leetcode problem solved: <a href="https://leetcode.com/problems/design-twitter/" target="_blank">Design Twitter</a></p>
       <div>
         <Link to="/login">
           <button>Login</button>
