@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./styles/Profile.css";
 
+// Define the base URL as a constant
+const global_link = "https://design-twitter.onrender.com/";
+
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [feed, setFeed] = useState([]);
@@ -30,8 +33,8 @@ const Profile = () => {
           },
         };
 
-        const profileResponse = await axios.get("https://design-twitter.onrender.com/profile", config);
-        const feedResponse = await axios.get("https://design-twitter.onrender.com/feed", config);
+        const profileResponse = await axios.get(`${global_link}profile`, config);
+        const feedResponse = await axios.get(`${global_link}feed`, config);
 
         setUserData(profileResponse.data);
         setFeed(feedResponse.data);
@@ -59,11 +62,10 @@ const Profile = () => {
         },
       };
       const response = await axios.get(
-        `https://design-twitter.onrender.com/search?prefix=${searchQuery}`,
+        `${global_link}search?prefix=${searchQuery}`,
         config
       );
 
-      // Set the results directly from the response data
       setSearchResults(response.data);
     } catch (error) {
       setMessage(error.response?.data?.detail || "Search failed.");
@@ -72,15 +74,28 @@ const Profile = () => {
 
   const handleTweet = async () => {
     const token = localStorage.getItem("token");
+    const username = localStorage.getItem("username");  // Retrieve username from localStorage
+
+    if (!username) {
+      setMessage("User data is not available. Please log in again.");
+      return;
+    }
+
     try {
       const config = {
         headers: {
           token: token,
         },
       };
+
+      const tweetData = {
+        username: username,
+        content: tweetContent,
+      };
+
       await axios.post(
-        "https://design-twitter.onrender.com/tweet",
-        { content: tweetContent },
+        `${global_link}tweet`,
+        tweetData,
         config
       );
       setMessage("Tweet posted!");
@@ -122,7 +137,6 @@ const Profile = () => {
           </ul>
         )}
       </div>
-
 
       <div className="feed-section">
         <h2>Your Feed</h2>

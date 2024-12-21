@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./styles/Login.css";
 
-
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -15,7 +14,7 @@ const Login = () => {
       const response = await axios.post("https://design-twitter.onrender.com/login", { username, password });
       setMessage(response.data.message);
       localStorage.setItem("token", response.data.token);
-      console.log(response.data.token);
+      localStorage.setItem("username", username);  // Store username in localStorage
       navigate("/profile");
     } catch (error) {
       setMessage(error.response?.data?.detail || "Login failed");
@@ -24,7 +23,6 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      
       <h1>Login</h1>
       <input
         type="text"
