@@ -88,7 +88,14 @@ class UserOutModel(BaseModel):
     following: List[str] = []
 
     class Config:
-        json_encoders = {ObjectId: str}
+        json_encoders = {ObjectId: str}  # Serialize ObjectId as str
+        json_schema_extra = {
+            "example": {
+                "username": "johndoe",
+                "followers": ["alice", "bob"],
+                "following": ["charlie"]
+            }
+        }
 
 class SignupModel(BaseModel):
     username: str = Field(..., max_length=50)
@@ -137,18 +144,6 @@ async def login(credentials: LoginModel):
     token = create_jwt(str(user["_id"]))
     
     return {"message": "Login successful", "token": token}
-
-# Get User Profile
-@app.get("/profile", response_model=UserOutModel)
-async def get_profile(token: str = Header(None)):
-    payload = verify_jwt(token)
-    user_id = payload.get("user_id")
-
-    user = await users_collection.find_one({"_id": ObjectId(user_id)}, {"hashed_password": 0})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found.")
-
-    return user
 
 # Search Users
 @app.get("/search")

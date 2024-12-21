@@ -26,7 +26,7 @@ const Profile = () => {
       try {
         const config = {
           headers: {
-            Authorization: `Bearer ${token}`,
+            token: token,
           },
         };
 
@@ -75,7 +75,7 @@ const Profile = () => {
     try {
       const config = {
         headers: {
-          Authorization: `Bearer ${token}`,
+          token: token,
         },
       };
       await axios.post(
