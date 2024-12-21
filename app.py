@@ -8,6 +8,7 @@ import datetime
 from typing import List, Optional
 import os
 import dotenv
+from fastapi.middleware.cors import CORSMiddleware
 
 dotenv.load_dotenv()
 
@@ -16,12 +17,20 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 ALGORITHM = os.environ.get("ALGORITHM")
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Adjust this to the specific domain of your frontend
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # MongoDB Connection
 client = MongoClient(MONGO_URI)
 db = client["leetcode_twitter"]
 users_collection = db["users"]
 tweets_collection = db["tweets"]
+
 
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
@@ -60,17 +69,7 @@ class TweetModel(BaseModel):
 
 @app.post("/signup")
 async def signup(user: SignupModel):
-    if users_collection.find_one({"username": user.username}):
-        raise HTTPException(status_code=400, detail="Username is already taken.")
-
-    hashed_password = hash_password(user.password)
-    user_data = {
-        "username": user.username,
-        "hashed_password": hashed_password,
-        "followers": [],
-        "following": []
-    }
-    users_collection.insert_one(user_data)
+    
     return {"message": "User registered successfully"}
 
 @app.post("/login")

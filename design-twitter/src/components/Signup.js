@@ -12,6 +12,7 @@ const Signup = () => {
       const response = await axios.post('https://design-twitter.onrender.com/signup', { username, password });
       setMessage(response.data.message);
     } catch (error) {
+      console.error("Error during signup:", error); // Add this line for debugging
       setMessage(error.response?.data?.detail || "Signup failed");
     }
   };
