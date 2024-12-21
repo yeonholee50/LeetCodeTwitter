@@ -57,9 +57,38 @@ def verify_jwt(token: str) -> dict:
         raise HTTPException(status_code=401, detail="Invalid token.")
 
 # Models
+
 class PyObjectId(str):
     """ Custom type for MongoDB ObjectId handling """
-    pass
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        if isinstance(v, ObjectId):
+            return str(v)
+        if isinstance(v, str):
+            return v
+        raise ValueError("Invalid ObjectId")
+
+# Update the config in UserOutModel
+class UserOutModel(BaseModel):
+    id: PyObjectId = Field(alias="_id")
+    username: str
+    followers: List[str] = []
+    following: List[str] = []
+
+    class Config:
+        json_encoders = {ObjectId: str}  # Serialize ObjectId as str
+        json_schema_extra = {
+            "example": {
+                "username": "johndoe",
+                "followers": ["alice", "bob"],
+                "following": ["charlie"]
+            }
+        }
 
 class SignupModel(BaseModel):
     username: str = Field(..., max_length=50)
@@ -79,21 +108,7 @@ class UserModel(BaseModel):
     followers: List[str] = []
     following: List[str] = []
 
-class UserOutModel(BaseModel):
-    id: PyObjectId = Field(alias="_id")
-    username: str
-    followers: List[str] = []
-    following: List[str] = []
 
-    class Config:
-        json_encoders = {ObjectId: str}  # Serialize ObjectId as str
-        schema_extra = {
-            "example": {
-                "username": "johndoe",
-                "followers": ["alice", "bob"],
-                "following": ["charlie"]
-            }
-        }
 
 # Signup Endpoint
 @app.post("/signup")

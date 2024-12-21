@@ -9,7 +9,7 @@ const Signup = () => {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post('https://design-twitter.onrender.com/signup', { username, password });
+      const response = await axios.post('http://127.0.0.1:8000/signup', { username, password });
       setMessage(response.data.message);
     } catch (error) {
       console.error("Error during signup:", error); // Add this line for debugging
