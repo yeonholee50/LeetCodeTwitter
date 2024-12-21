@@ -9,6 +9,7 @@ import os
 import dotenv
 from fastapi.middleware.cors import CORSMiddleware
 import motor.motor_asyncio
+import logging
 
 # Load environment variables
 dotenv.load_dotenv()
@@ -45,15 +46,20 @@ def create_jwt(user_id: str) -> str:
         "user_id": user_id,
         "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1)
     }
-    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+    
+    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+    logging.debug(f"Generated JWT: {token}")  # Log the generated token
+    return token
 
 def verify_jwt(token: str) -> dict:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        logging.debug(f"Decoded JWT Payload: {payload}")  # Log the decoded payload
         return payload
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired.")
     except jwt.InvalidTokenError:
+        logging.error(token)  # Log the error
         raise HTTPException(status_code=401, detail="Invalid token.")
 
 # Models
