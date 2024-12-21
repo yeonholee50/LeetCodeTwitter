@@ -1,18 +1,21 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./styles/Login.css";
-import TwitterLogo from "./TwitterLogo";
+import TwitterLogo from './twitterlogo.png';
+
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://localhost:8000/login", { email, password });
+      const response = await axios.post("http://127.0.0.1:8000/login", { username, password });
       setMessage(response.data.message);
       localStorage.setItem("token", response.data.token);
+      navigate("/profile");
     } catch (error) {
       setMessage(error.response?.data?.detail || "Login failed");
     }
@@ -23,10 +26,10 @@ const Login = () => {
       <TwitterLogo />
       <h1>Login</h1>
       <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        type="text"
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
       />
       <br />
       <input
@@ -49,4 +52,3 @@ const Login = () => {
 };
 
 export default Login;
-

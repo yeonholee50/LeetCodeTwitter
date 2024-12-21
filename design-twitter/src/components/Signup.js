@@ -4,13 +4,12 @@ import "./styles/Signup.css";
 
 const Signup = () => {
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post("http://localhost:8000/signup", { username, email, password });
+      const response = await axios.post("http://127.0.0.1:8000/signup", { username, password });
       setMessage(response.data.message);
     } catch (error) {
       setMessage(error.response?.data?.detail || "Signup failed");
@@ -25,13 +24,6 @@ const Signup = () => {
         placeholder="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-      />
-      <br />
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
       />
       <br />
       <input

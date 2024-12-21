@@ -141,3 +141,8 @@ async def get_feed(token: str = Header(None)):
     following = user["following"]
     tweets = tweets_collection.find({"username": {"$in": following}}).sort("timestamp", -1).limit(10)
     return [{"username": tweet["username"], "content": tweet["content"], "timestamp": tweet["timestamp"]} for tweet in tweets]
+
+
+@app.get("/")
+async def root():
+    return {"message": "LeetCode API is running!"}
