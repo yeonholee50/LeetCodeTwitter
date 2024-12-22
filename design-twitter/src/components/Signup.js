@@ -4,7 +4,6 @@ import "./styles/Signup.css";
 import "./styles/Profile.css";
 import { Link, useNavigate } from "react-router-dom";
 
-const global_link = "https://design-twitter.onrender.com/";
 
 const Signup = () => {
   const [username, setUsername] = useState("");
@@ -12,17 +11,11 @@ const Signup = () => {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-
-
   const handleSignup = async () => {
     try {
-      const response = await axios.post(`${global_link}signup`, { username, password });
+      const response = await axios.post('https://design-twitter.onrender.com//signup', { username, password });
       setMessage(response.data.message);
-      const token = response.data.token;
-      if (token) {
-        localStorage.setItem("token", token);
-        
-      }
+      
     } catch (error) {
       console.error("Error during signup:", error); // Add this line for debugging
       setMessage(error.response?.data?.detail || "Signup failed");
@@ -48,12 +41,6 @@ const Signup = () => {
       <br />
       <button onClick={handleSignup}>Sign Up</button>
       <p className="message">{message}</p>
-      <p>
-        Already have an account?{" "}
-        <Link to="/login" className="login-link">
-          Click here to login.
-        </Link>
-      </p>
     </div>
   );
 };
