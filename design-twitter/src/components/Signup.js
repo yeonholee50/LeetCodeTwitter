@@ -11,13 +11,13 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-
+  useEffect(() => {
+    document.title = "Signup - LeetCodeTwitter";
+  }, []);
 
 
   const handleSignup = async () => {
-    useEffect(() => {
-      document.title = "Signup - LeetCodeTwitter";
-    }, []);
+    
     try {
       const response = await axios.post(`${global_link}signup`, { username, password });
       setMessage(response.data.message);

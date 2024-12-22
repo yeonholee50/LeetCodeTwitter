@@ -8,11 +8,11 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-
+  useEffect(() => {
+    document.title = "Login - LeetCodeTwitter";
+  }, []);
   const handleLogin = async () => {
-    useEffect(() => {
-      document.title = "Login - LeetCodeTwitter";
-    }, []);
+    
     try {
       const response = await axios.post("https://design-twitter.onrender.com/login", { username, password });
       setMessage(response.data.message);
