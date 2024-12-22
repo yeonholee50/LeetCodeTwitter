@@ -13,7 +13,7 @@ const Signup = () => {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post('https://design-twitter.onrender.com//signup', { username, password });
+      const response = await axios.post('https://design-twitter.onrender.com/signup', { username, password });
       setMessage(response.data.message);
       
     } catch (error) {
