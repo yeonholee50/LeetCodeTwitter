@@ -4,7 +4,7 @@ import axios from "axios";
 import "./styles/Profile.css";
 
 // Define the base URL as a constant
-const global_link = "https://design-twitter.onrender.com/";
+const global_link = "https://design-twitter.onrender.com//";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -38,6 +38,7 @@ const Profile = () => {
 
         setUserData(profileResponse.data);
         setFeed(feedResponse.data);
+        console.log(feedResponse.data);
       } catch (error) {
         if (error.response?.status === 401) {
           setMessage("Session expired. Please log in again.");
@@ -74,12 +75,6 @@ const Profile = () => {
 
   const handleTweet = async () => {
     const token = localStorage.getItem("token");
-    const username = localStorage.getItem("username");  // Retrieve username from localStorage
-
-    if (!username) {
-      setMessage("User data is not available. Please log in again.");
-      return;
-    }
 
     try {
       const config = {
@@ -89,7 +84,6 @@ const Profile = () => {
       };
 
       const tweetData = {
-        username: username,
         content: tweetContent,
       };
 
