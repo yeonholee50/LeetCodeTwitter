@@ -74,7 +74,7 @@ class PyObjectId(ObjectId):
         yield cls.validate
 
     @classmethod
-    def validate(cls, v):
+    def validate(cls, v, field=None):
         if not ObjectId.is_valid(v):
             raise ValueError('Invalid ObjectId')
         return ObjectId(v)
@@ -122,8 +122,8 @@ async def signup(user: SignupModel):
     user_data = {
         "username": user.username,
         "hashed_password": hashed_password,
-        "followers": [user.username],
-        "following": [user.username]
+        "followers": [],
+        "following": []
     }
     result = await users_collection.insert_one(user_data)
     return {"message": "User registered successfully", "user_id": str(result.inserted_id)}
@@ -207,7 +207,7 @@ async def get_feed(token: str = Header(None)):
     user = await users_collection.find_one({"_id": ObjectId(user_id)})
     following = user["following"]
     following.append(user["username"])  # Include the user themselves
-    tweets = await tweets_collection.find({"username": {"$in": following}}).sort("timestamp", 1).limit(10).to_list(100)
+    tweets = await tweets_collection.find({"username": {"$in": following}}).sort("timestamp", -1).limit(10).to_list(10)
     return [{"username": tweet["username"], "content": tweet["content"], "timestamp": tweet["timestamp"]} for tweet in tweets]
 
 @app.get("/")
