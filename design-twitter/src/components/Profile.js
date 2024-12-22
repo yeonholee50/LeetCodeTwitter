@@ -51,8 +51,8 @@ const Profile = () => {
 
     fetchProfileData();
 
-    // Set up interval to refresh feed every 30 seconds
-    const intervalId = setInterval(fetchProfileData, 30000);
+    // Set up interval to refresh feed every 10 seconds
+    const intervalId = setInterval(fetchProfileData, 10000);
 
     // Clean up interval on component unmount
     return () => clearInterval(intervalId);
