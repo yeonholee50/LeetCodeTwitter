@@ -46,3 +46,46 @@
     font-size: 16px;
     color: #E0245E; /* Error red for unsuccessful follow/unfollow */
 }
+
+.search-results {
+    list-style: none;
+    padding: 0;
+}
+
+.search-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 300px;
+    margin: 10px auto;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.username {
+    font-size: 16px;
+}
+
+.follow-button {
+    background-color: #1DA1F2;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.unfollow-button {
+    background-color: #E0245E;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.follow-button:hover, .unfollow-button:hover {
+    opacity: 0.8;
+}

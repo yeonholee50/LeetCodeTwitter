@@ -1,10 +1,10 @@
-from fastapi import FastAPI, HTTPException, Depends, Header
-from pydantic import BaseModel, EmailStr, Field
+from fastapi import FastAPI, HTTPException, Header
+from pydantic import BaseModel, Field
 from bson import ObjectId
 import bcrypt
 import jwt
 import datetime
-from typing import List, Optional
+from typing import List
 import os
 import dotenv
 from fastapi.middleware.cors import CORSMiddleware
@@ -153,8 +153,6 @@ async def search_users(prefix: str, token: str = Header(None)):
 
 @app.post("/tweet")
 async def post_tweet(tweet: TweetModel, token: str = Header(None)):
-    
-    
     payload = verify_jwt(token)
     user_id = payload.get("user_id")
     user = await users_collection.find_one({"_id": ObjectId(user_id)})
@@ -164,7 +162,6 @@ async def post_tweet(tweet: TweetModel, token: str = Header(None)):
         "timestamp": tweet.timestamp
     }
     await tweets_collection.insert_one(tweet_data)
-    
     return {"message": "Tweet posted successfully."}
 
 @app.post("/follow")
@@ -194,18 +191,16 @@ async def unfollow_user(data: dict, token: str = Header(None)):
     await users_collection.update_one({"username": target_username}, {"$pull": {"followers": user["username"]}})
     return {"message": "User unfollowed successfully."}
 
-
-
 @app.get("/feed")
 async def get_feed(token: str = Header(None)):
     payload = verify_jwt(token)
     user_id = payload.get("user_id")
     user = await users_collection.find_one({"_id": ObjectId(user_id)})
     following = user["following"]
+    following.append(user["username"])  # Include the user themselves
     tweets = await tweets_collection.find({"username": {"$in": following}}).sort("timestamp", -1).limit(10).to_list(100)
     return [{"username": tweet["username"], "content": tweet["content"], "timestamp": tweet["timestamp"]} for tweet in tweets]
 
 @app.get("/")
 async def root():
     return {"message": "LeetCode API is running!"}
-     

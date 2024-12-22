@@ -176,14 +176,24 @@ const Profile = () => {
         />
         <button onClick={handleSearch}>Search</button>
         {searchResults.length > 0 && (
-          <ul>
+          <ul className="search-results">
             {searchResults.map((username, index) => (
-              <li key={index}>
-                {username}
+              <li key={index} className="search-item">
+                <span className="username">{username}</span>
                 {userData?.following.includes(username) ? (
-                  <button onClick={() => handleUnfollow(username)}>Unfollow</button>
+                  <button
+                    className="unfollow-button"
+                    onClick={() => handleUnfollow(username)}
+                  >
+                    Unfollow
+                  </button>
                 ) : (
-                  <button onClick={() => handleFollow(username)}>Follow</button>
+                  <button
+                    className="follow-button"
+                    onClick={() => handleFollow(username)}
+                  >
+                    Follow
+                  </button>
                 )}
               </li>
             ))}
