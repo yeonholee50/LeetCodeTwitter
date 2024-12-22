@@ -14,8 +14,11 @@ const Profile = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-
   useEffect(() => {
+    document.title = "Profile - LeetCodeTwitter";
+  }, [])
+  useEffect(() => {
+    
     const token = localStorage.getItem("token");
 
     // If no token, redirect to login

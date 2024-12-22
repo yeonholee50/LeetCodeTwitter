@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useEffect} from "react";
 import { Link } from "react-router-dom";
 import "./styles/Home.css";
 import twitterLogo from './twitterlogo.png'
 import { Helmet } from "react-helmet";
 
 const Home = () => {
+  useEffect(() => {
+    document.title = "Home - LeetCodeTwitter";
+  }, []);
   return (
     <div className="home-container">
         <Helmet>

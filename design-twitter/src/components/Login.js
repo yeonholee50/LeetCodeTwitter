@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./styles/Login.css";
@@ -10,6 +10,9 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    useEffect(() => {
+      document.title = "Login - LeetCodeTwitter";
+    }, []);
     try {
       const response = await axios.post("https://design-twitter.onrender.com/login", { username, password });
       setMessage(response.data.message);

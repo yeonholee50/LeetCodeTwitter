@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./styles/Signup.css";
 import "./styles/Profile.css";
@@ -15,6 +15,9 @@ const Signup = () => {
 
 
   const handleSignup = async () => {
+    useEffect(() => {
+      document.title = "Signup - LeetCodeTwitter";
+    }, []);
     try {
       const response = await axios.post(`${global_link}signup`, { username, password });
       setMessage(response.data.message);
