@@ -207,7 +207,16 @@ async def get_feed(token: str = Header(None)):
     user = await users_collection.find_one({"_id": ObjectId(user_id)})
     following = user["following"]
     following.append(user["username"])  # Include the user themselves
-    tweets = await tweets_collection.find({"username": {"$in": following}}).sort("timestamp", -1).limit(10).to_list(10)
+
+    # Fetch the tweets and sort by timestamp in descending order
+    tweets_cursor = tweets_collection.find({"username": {"$in": following}}).sort("timestamp", -1)
+    tweets = await tweets_cursor.to_list(length=10)  # Limit to 10 most recent tweets
+
+    # Log the tweets to see how they are being ordered
+    logging.info("Fetched Tweets:")
+    for tweet in tweets:
+        logging.info(f"Username: {tweet['username']}, Content: {tweet['content']}, Timestamp: {tweet['timestamp']}")
+
     return [{"username": tweet["username"], "content": tweet["content"], "timestamp": tweet["timestamp"]} for tweet in tweets]
 
 @app.get("/")
