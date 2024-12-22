@@ -12,18 +12,7 @@ const Signup = () => {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  const decrementTimeDelta = async (token) => {
-    try {
-      const config = {
-        headers: {
-          token: token,
-        },
-      };
-      await axios.post(`${global_link}decrement_time_delta`, {}, config);
-    } catch (error) {
-      console.error("Error decrementing time_delta:", error);
-    }
-  };
+
 
   const handleSignup = async () => {
     try {
@@ -32,8 +21,7 @@ const Signup = () => {
       const token = response.data.token;
       if (token) {
         localStorage.setItem("token", token);
-        await decrementTimeDelta(token);
-        navigate("/profile");
+        
       }
     } catch (error) {
       console.error("Error during signup:", error); // Add this line for debugging
