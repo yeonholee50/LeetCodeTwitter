@@ -122,7 +122,10 @@ const Profile = () => {
       );
       setMessage(`Followed ${targetUsername}`);
       // Update search results to reflect the follow status
-      handleSearch();
+      const updatedResults = searchResults.map(user => 
+        user.username === targetUsername ? { ...user, is_following: true } : user
+      );
+      setSearchResults(updatedResults);
     } catch (error) {
       setMessage(error.response?.data?.detail || `Failed to follow ${targetUsername}`);
     }
@@ -145,7 +148,10 @@ const Profile = () => {
       );
       setMessage(`Unfollowed ${targetUsername}`);
       // Update search results to reflect the unfollow status
-      handleSearch();
+      const updatedResults = searchResults.map(user => 
+        user.username === targetUsername ? { ...user, is_following: false } : user
+      );
+      setSearchResults(updatedResults);
     } catch (error) {
       setMessage(error.response?.data?.detail || `Failed to unfollow ${targetUsername}`);
     }
@@ -177,20 +183,20 @@ const Profile = () => {
         <button onClick={handleSearch}>Search</button>
         {searchResults.length > 0 && (
           <ul className="search-results">
-            {searchResults.map((username, index) => (
+            {searchResults.map((user, index) => (
               <li key={index} className="search-item">
-                <span className="username">{username}</span>
-                {userData?.following.includes(username) ? (
+                <span className="username">{user.username}</span>
+                {user.is_following ? (
                   <button
                     className="unfollow-button"
-                    onClick={() => handleUnfollow(username)}
+                    onClick={() => handleUnfollow(user.username)}
                   >
                     Unfollow
                   </button>
                 ) : (
                   <button
                     className="follow-button"
-                    onClick={() => handleFollow(username)}
+                    onClick={() => handleFollow(user.username)}
                   >
                     Follow
                   </button>
@@ -205,8 +211,8 @@ const Profile = () => {
         <h2>Your Feed</h2>
         {feed.length > 0 ? (
           <ul>
-            {feed.map((post) => (
-              <li key={post.id}>
+            {feed.map((post, index) => (
+              <li key={index}>
                 <strong>{post.username}:</strong> {post.content}
               </li>
             ))}

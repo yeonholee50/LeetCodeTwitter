@@ -147,9 +147,18 @@ async def get_profile(token: str = Header(None)):
 
 @app.get("/search")
 async def search_users(prefix: str, token: str = Header(None)):
-    verify_jwt(token)
+    payload = verify_jwt(token)
+    user_id = payload.get("user_id")
+    user = await users_collection.find_one({"_id": ObjectId(user_id)})
+
     users = await users_collection.find({"username": {"$regex": f"^{prefix}", "$options": "i"}}).to_list(100)
-    return [user["username"] for user in users]
+    results = []
+    for u in users:
+        results.append({
+            "username": u["username"],
+            "is_following": u["username"] in user["following"]
+        })
+    return results
 
 @app.post("/tweet")
 async def post_tweet(tweet: TweetModel, token: str = Header(None)):
@@ -198,7 +207,7 @@ async def get_feed(token: str = Header(None)):
     user = await users_collection.find_one({"_id": ObjectId(user_id)})
     following = user["following"]
     following.append(user["username"])  # Include the user themselves
-    tweets = await tweets_collection.find({"username": {"$in": following}}).sort("timestamp", -1).limit(10).to_list(100)
+    tweets = await tweets_collection.find({"username": {"$in": following}}).sort("timestamp", 1).limit(10).to_list(100)
     return [{"username": tweet["username"], "content": tweet["content"], "timestamp": tweet["timestamp"]} for tweet in tweets]
 
 @app.get("/")
