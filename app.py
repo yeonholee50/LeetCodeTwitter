@@ -73,8 +73,8 @@ async def decrement_time_delta():
     if not time_delta_doc:
         raise HTTPException(status_code=500, detail="Time delta document not found.")
     
-    new_time_delta = time_delta_doc['time_delta'] - 0.01
-    await time_delta_collection.update_one({}, {"$set": {"time_delta": new_time_delta}})
+    new_time_delta = time_delta_doc['time'] - 0.01
+    await time_delta_collection.update_one({}, {"$set": {"time": new_time_delta}})
     return new_time_delta
 
 # Models
