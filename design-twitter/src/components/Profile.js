@@ -38,7 +38,6 @@ const Profile = () => {
 
         setUserData(profileResponse.data);
         setFeed(feedResponse.data);
-        console.log(feedResponse.data);
       } catch (error) {
         if (error.response?.status === 401) {
           setMessage("Session expired. Please log in again.");
@@ -51,6 +50,13 @@ const Profile = () => {
     };
 
     fetchProfileData();
+
+    // Set up interval to refresh feed every 30 seconds
+    const intervalId = setInterval(fetchProfileData, 30000);
+
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
+
   }, [navigate]);
 
   const handleSearch = async () => {
