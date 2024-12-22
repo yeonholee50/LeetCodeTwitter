@@ -122,8 +122,8 @@ async def signup(user: SignupModel):
     user_data = {
         "username": user.username,
         "hashed_password": hashed_password,
-        "followers": [],
-        "following": []
+        "followers": [user.username],
+        "following": [user.username]
     }
     result = await users_collection.insert_one(user_data)
     return {"message": "User registered successfully", "user_id": str(result.inserted_id)}
