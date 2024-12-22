@@ -73,8 +73,8 @@ async def decrement_time_delta():
     if not time_delta_doc:
         raise HTTPException(status_code=500, detail="Time delta document not found.")
     
-    new_time_delta = time_delta_doc['time'] - 0.01
-    await time_delta_collection.update_one({}, {"$set": {"time": new_time_delta}})
+    new_time_delta = time_delta_doc['time_delta'] - 0.01
+    await time_delta_collection.update_one({}, {"$set": {"time_delta": new_time_delta}})
     return new_time_delta
 
 # Models
@@ -179,8 +179,10 @@ async def post_tweet(tweet: TweetModel, token: str = Header(None)):
     user_id = payload.get("user_id")
     user = await users_collection.find_one({"_id": ObjectId(user_id)})
     time_delta = await decrement_time_delta()
+    timestamp = datetime.datetime.utcnow().isoformat()
     tweet_data = {
         "time_delta": time_delta,
+        "timestamp": timestamp,
         "content": tweet.content
     }
     await users_collection.update_one({"_id": ObjectId(user_id)}, {"$push": {"tweets": tweet_data}})
@@ -233,19 +235,16 @@ async def get_feed(token: str = Header(None)):
                 tweet_with_username = {
                     "username": username,
                     "content": tweet["content"],
-                    "time_delta": tweet["time_delta"]
+                    "time_delta": tweet["time_delta"],
+                    "timestamp": tweet["timestamp"]
                 }
-                heapq.heappush(q, (tweet['time_delta'], tweet_with_username))
-
-    # Sort tweets by time_delta in ascending order (most recent)
+                heapq.heappush(q, (tweet_with_username["time_delta"], tweet_with_username))
     while q and len(tweets) < 10:
-        time_delta, tweet = heapq.heappop(q)
+        _, tweet = heapq.heappop(q)
         tweets.append(tweet)
-    
-    # Log the tweets to see how they are being ordered
-    
-    
     return tweets
+
+
 @app.get("/")
 async def root():
     return {"message": "LeetCode API is running!"}

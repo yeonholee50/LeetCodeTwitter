@@ -214,6 +214,8 @@ const Profile = () => {
             {feed.map((post, index) => (
               <li key={index}>
                 <strong>{post.username}:</strong> {post.content}
+                <br />
+                <small>{new Date(post.timestamp).toLocaleString()}</small>
               </li>
             ))}
           </ul>
