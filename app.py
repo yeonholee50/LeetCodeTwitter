@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import motor.motor_asyncio
 import logging
 import heapq
+from fastapi.logger import logger
 
 logging.basicConfig(
     level=logging.INFO,
@@ -156,6 +157,7 @@ async def get_profile(token: str = Header(None)):
     user = await users_collection.find_one({"_id": ObjectId(user_id)}, {"hashed_password": 0})
     if not user:
         raise HTTPException(status_code=404, detail="User not found.")
+    logger.info(f"User received: {user}")
     return user
 
 @app.get("/search")
